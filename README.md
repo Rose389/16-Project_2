@@ -1,4 +1,4 @@
-# Gutenberg Book Club App Project_2)
+# Gutenberg Book Club App (Project_2)
 
 A user is able to: 
   build a personal profile, 
