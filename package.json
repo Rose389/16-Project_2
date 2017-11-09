@@ -1,0 +1,23 @@
+{
+  "name": "16-project_2",
+  "version": "1.0.0",
+  "description": "Gutenberg Book Club App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rose389/16-Project_2.git"
+  },
+  "author": "Marguerite Seifert, Daniel & Maria Brown, Zach Henry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rose389/16-Project_2/issues"
+  },
+  "homepage": "https://github.com/Rose389/16-Project_2#readme",
+  "dependencies": {
+    "mysql2": "^1.4.2",
+    "sequelize": "^4.22.5"
+  }
+}
