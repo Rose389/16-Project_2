@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Favorite books</title>
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+    .book {
+      width: 100%;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0px;
+      width: 100%;
+      margin: 0;
+      padding: 1rem;
+      background-color: #efefef;
+      text-align: center;
+      color: #777777;
+    }
+  </style>
+      <!-- bootstraps 3.3.7 -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+
+
+
+<body>
+          <!-- NavBar (Main:Uni-v) -->
+    <nav class="navbar navbar-default" style="background-color:black;">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Brand</a>
+          </div>
+      
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+            </ul>
+
+            <!-- Search Bar -->
+            <form class="navbar-form navbar-right" id="book-form">
+              <div class="form-group">
+                <input type="text" class="form-control" id="book-input" placeholder="Search Book Title or Author" style="width: 350px;">
+              </div>
+              <button type="submit" id="add-book" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Action</a></li>
+                  <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">Separated link</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+            <!--  End of NavBar  -->
+
+
+
+  <div class="container" >
+<div class="row"> 
+
+              <!--  left side bar  -->
+  <div class="col-lg-3 col-md-3 col-sm-0">
+      <div class="panel panel-default">
+        <div class="panel panel-heading">
+          Content
+        </div>
+      <div class="panel-body">
+          <!--  Recommended books -->
+  <div class="row"> 
+      <div class="panel panel-default">
+        <div class="panel-heading">Recommended Books</div>
+        <div class="panel-body">
+            <!-- Rendered Buttons will get Dumped Here  -->
+            <div id="buttons-view" style="margin: 10px"></div>
+          </div>
+        </div>
+      </div>
+          <!--  Searched books -->      
+      <div class="row"> 
+          <div class="panel panel-default">
+            <div class="panel-heading">Searched Books</div>
+            <div class="panel-body">
+                <!-- Rendered Buttons will get Dumped Here  -->
+                <div id="searched-buttons" style="margin: 10px"></div>
+              </div>
+            </div>
+          </div>      
+      
+    </div>
+  </div>      
+</div>
+
+
+
+            <!--  main content (center)  -->
+  <div class="col-lg-7 col-lg-offset-1 col-md-7 col-md-offset-1 col-sm-12">
+  <div class="panel panel-default">
+      <div class="panel-heading"><h1><strong>Book Search Results:</strong></h1></div>
+      <div class="panel panel-body">            
+    <!-- sub panels -->
+
+
+
+    <!-- book results-->
+    <div id="books-panel"></div>
+
+      </div><!--  End of content -->
+
+    </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<div class="footer">&copy; Copywright Zack Henry</div>
+
+<!--// ~~~~~~~~~~~~~~~~~~~~  !!!!!!!SCRIPTS!!!!!! ~~~~~~~~~~~~~~~~~~~~~~~
+//,,,,,,,,,,,,,,,,,,,,,,(AJAX CONNECTION),,,,,,,,,,,,,,,,,,,,,,,,,//-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      // Initial array of books
+      var books = ["Thrawn", "Gone With The Wind", "Harry Potter", "Star Wars: Ahsoka"];
+      
+      //seached books 
+      var booksSearched = [];
+        console.log(booksSearched);
+
+      // displayMovieInfo function re-renders the HTML to display the appropriate content
+      function displayBookInfo() {
+
+        var book = $(this).attr("data-name");
+        var queryURL = "https://www.googleapis.com/books/v1/volumes?q=" + book;
+        
+
+
+
+        // Creating an AJAX call for the specific book button being clicked
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).done(function(response) {
+            console.log(response);        
+            
+            //below loops in order making item 0 @ bottom
+          //for (i = 0; i < response.items.length; i++) { 
+
+            //below loops in reverse putting item 0 @ top
+          for (var i = response.items.length-1; 0 < i; i--) {
+          
+            // Creating a panel div to hold the book info
+          var bookPanelDiv = $("<div class='panel panel-info'><div class='panel-heading'><div id='books-title' style='color:black;'></div></div><div class='panel-body'><div id='books-view'></div></div></div>");
+
+            // Creating a div to hold the book
+          var bookDiv = $("<div class='book'>");
+            //creating a div to hold the title
+          var bookTitleDiv = $("<strong>");
+
+
+          // Storing the Title data
+          var title = response.items[i].volumeInfo.title;
+
+          // Creating an element to have the Title displayed
+          var pOne = $("<p>").text("Title: " + title);
+
+          // Displaying the Title
+          bookTitleDiv.append(pOne);
+
+          // Storing the Authors data
+          var authors = response.items[i].volumeInfo.authors;
+
+          // Creating an element to have the authors displayed
+          var pTwo = $("<p>").text("Authors: " + authors);
+
+          // Displaying the authors
+          bookDiv.append(pTwo);
+
+          // Storing the release year
+          var released = response.items[i].volumeInfo.publishedDate;
+
+          // Creating an element to hold the release year
+          var pThree = $("<p>").text("Released: " + released);
+
+          // Displaying the release year
+          bookDiv.append(pThree);
+
+          // Storing the plot
+          var plot = response.items[i].volumeInfo.description;
+
+          // Creating an element to hold the plot
+          var pFour = $("<p>").text("Plot: " + regex(plot));
+
+          // Appending the plot
+          bookDiv.append(pFour);
+
+          // Retrieving the URL for the image
+          var imgURL = response.items[i].volumeInfo.imageLinks.smallThumbnail;
+
+          // Creating an element to hold the image
+          var image = $("<img>").attr("src", imgURL);
+
+          // Appending the image
+          bookDiv.append(image);
+
+          // Putting the entire book above the previous books
+          $("#books-panel").prepend(bookPanelDiv); 
+          $("#books-title").prepend(bookTitleDiv);   
+          $("#books-view").prepend(bookDiv);        
+          }
+        });
+
+      }
+
+
+// ~~~~~~~~~~~~~~~~~~~~  !!!!Possibly delete SECTION!!!!  Below v ~~~~~~~~~~~~~~~~~~~~~~~
+      // Function for displaying book data
+      function renderButtons() {
+
+        // Deleting the books prior to adding new books
+        // (this is necessary otherwise you will have repeat buttons)
+        $("#buttons-view").empty();
+
+        // Looping through the array of books
+        for (var j = 0; j < books.length; j++) {
+
+          // Then dynamicaly generating buttons for each book in the array
+          // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+          var a = $("<button>");
+          // Adding a class of book to our button
+          a.addClass("book");
+          // Adding a data-attribute
+          a.attr("data-name", books[j]);
+          // Providing the initial button text
+          a.text(books[j]);
+          // Adding the button to the buttons-view div
+          $("#buttons-view").append(a);
+        }
+      };
+//~~~~~~~~~~~~~~~~~~~~~~~~~~`testing searched buttons~~~~~~~~~~~~~~~~~~~~~~~~
+      function renderButtons2() {          
+        
+        //$("#searched-buttons").empty();
+
+        // Looping through the array of books
+        for (var k = 0; k < booksSearched.length; k++) {
+
+          // Then dynamicaly generating buttons for each book in the array
+          // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+          var b = $("<button>");
+          // Adding a class of book to our button
+          b.addClass("book2");
+          // Adding a data-attribute
+          b.attr("data-name", booksSearched[k]);
+          // Providing the initial button text
+          b.text(booksSearched[k]);
+          // Adding the button to the buttons-view div
+          $("#searched-buttons").append(b);
+
+          
+        } 
+      };
+        
+//~~~~~~~~~~~~~~~~~~~~  !!!!Possibly delete SECTION!!!! Up ^ ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+
+
+
+
+
+
+
+
+
+          //this is the function that displays results from search bar
+      function displayBookInfo2() {
+
+        //when submit is clicked this displays results directly 
+        var queryURL = "https://www.googleapis.com/books/v1/volumes?q=" + booksSearched;
+        
+        // Creating an AJAX call for the specific book button being clicked
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).done(function(response) {
+            console.log(response)        
+            
+            //below loops in order making item 0 @ bottom
+          //for (i = 0; i < response.items.length; i++) { 
+
+            //below loops in reverse putting item 0 @ top
+          for (var i = response.items.length-1; 0 < i; i--) {
+          
+
+
+            // Creating a panel div to hold the book info
+          var bookPanelDiv = $("<div class='panel panel-info'><div class='panel-heading'><div id='books-title'></div></div><div class='panel-body'><div id='books-view'></div></div></div>");
+
+            // Creating a div to hold the book
+          var bookDiv = $("<div class='book'>");
+            //creating a div to hold the title
+          var bookTitleDiv = $("<strong>");
+
+          // Storing the Title data
+          var title = response.items[i].volumeInfo.title;
+
+          // Creating an element to have the Title displayed
+          var pOne = $("<p>").text("Title: " + title);
+
+          // Displaying the Title
+          bookTitleDiv.append(pOne);
+
+          // Storing the Authors data
+          var authors = response.items[i].volumeInfo.authors;
+
+          // Creating an element to have the authors displayed
+          var pTwo = $("<p>").text("Authors: " + authors);
+
+          // Displaying the authors
+          bookDiv.append(pTwo);
+
+          // Storing the release year
+          var released = response.items[i].volumeInfo.publishedDate;
+
+          // Creating an element to hold the release year
+          var pThree = $("<p>").text("Released: " + released);
+
+          // Displaying the release year
+          bookDiv.append(pThree);
+
+          // Storing the plot
+          var plot = response.items[i].volumeInfo.description;
+
+          // Creating an element to hold the plot
+          var pFour = $("<p>").text("Plot: " + plot);
+
+          // Appending the plot
+          bookDiv.append(pFour);
+
+          // Retrieving the URL for the image
+          var imgURL = response.items[i].volumeInfo.imageLinks.smallThumbnail;
+
+          // Creating an element to hold the image
+          var image = $("<img>").attr("src", imgURL);
+
+          // Appending the image
+          bookDiv.append(image);
+
+          // Putting the entire book above the previous books
+          $("#books-panel").prepend(bookPanelDiv); 
+          $("#books-title").prepend(bookTitleDiv);        
+          $("#books-view").prepend(bookDiv);                
+          }
+        });
+
+      }
+
+// ~~~~~~~~~~~~~~~~~~~~  LEFT CONTENT/NAV BAR BUTTTON FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~
+//,,,,,,,,,,,,,,,,,,,,,,(RECOMMENDED BOOKS SECTION),,,,,,,,,,,,,,,,,,,,,,,,,//
+      // This function handles events where a book button is clicked
+      $("#add-book").on("click", function(event) {
+        event.preventDefault();
+        // This line grabs the input from the textbox
+        // Calling renderButtons which handles the processing of our book array
+        renderButtons();
+      });
+
+//,,,,,,,,,,,,,,,,,,,,,,(RECOMMENDED BOOKS SECTION),,,,,,,,,,,,,,,,,,,,,,,,,//
+      // This function handles events where a submit button is clicked it is add the buttons on the left side content bar under searched books
+
+      $("#add-book").on("click", function(event) {
+        event.preventDefault();
+        // This line grabs the input from the textbox
+        var book2 = $("#book-input").val().trim();
+        // Adding book from the textbox to our array
+        var arraycontains = booksSearched.indexOf(book2) > -1;
+        console.log(arraycontains);
+        if (arraycontains === false) {
+          booksSearched.push(book2);
+          var b = $("<button>");
+          // Adding a class of book to our button
+          b.addClass("book2");
+          // Adding a data-attribute
+          b.attr("data-name", book2);
+          // Providing the initial button text
+          b.text(book2);
+          // Adding the button to the buttons-view div
+          $("#searched-buttons").append(b);
+        } else {
+          console.log("Cannot Add Duplicates");
+        }
+      });
+
+
+
+
+
+
+      // Adding a click event listener to all elements with a class of "book" & id of "add-book"
+      $(document).on("click", ".book", displayBookInfo);
+      $(document).on("click", "#add-book", displayBookInfo2);
+
+      // Calling the renderButtons function to display the intial buttons
+      renderButtons();
+
+// ~~~~~~~~~~~~~~~~~~~~  !!!!TESTING SECTION!!!!  ~~~~~~~~~~~~~~~~~~~~~~~
+
+    </script>
+
+</body>
+
+</html>
+
+
+
